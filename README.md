@@ -5,7 +5,7 @@ The client has requested that we create a Drupal site that helps their executive
  ### Reservation Content Type
 
 | Field Name | Machine Name | Description  |
-| :---------|:------------|:-------------------------------------|   
+| :---------|:--------------|:-------------------------------------|
 | airline    | airline      | The airline the reservation is with. |
 
 Please post the module code to GitHub or a Drupal.org sandbox project. While there is no time limit on the test, how long it took to complete, measured from first to last commit, will be a factor.
