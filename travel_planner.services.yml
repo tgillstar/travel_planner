@@ -1,0 +1,3 @@
+services:
+    travel_planner.accept_email:
+        class: Drupal\travel_planner\AcceptEmailService

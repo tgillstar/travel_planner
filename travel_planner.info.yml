@@ -1,0 +1,5 @@
+name: 'Travel Planner'
+type: module
+description: 'Travel Planner Base module'
+package: 'TravelPlanner'
+core: 8.x

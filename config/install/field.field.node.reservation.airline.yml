@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.reservation
+    - field.storage.node.airline
+id: node.reservation.airlines
+field_name: airline
+entity_type: node
+bundle: reservation
+label: Airline
+description: The airline(s) for the reservation
+field_type: string
+settings: { }
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
