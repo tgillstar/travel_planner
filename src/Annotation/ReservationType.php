@@ -4,14 +4,14 @@ namespace Drupal\travel_planner\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a Reservation widget item annotation object.
+ * Defines a Reservation type item annotation object.
  *
- * @see \Drupal\travel_planner\Plugin\ReservationWidgetManager
+ * @see \Drupal\travel_planner\Plugin\ReservationTypeManager
  * @see plugin_api
  *
  * @Annotation
  */
-class ReservationWidget extends Plugin {
+class ReservationType extends Plugin {
   /**
    * @var string
    */

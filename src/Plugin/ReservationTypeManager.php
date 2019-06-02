@@ -4,11 +4,11 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 /**
- * Provides the Reservation widget plugin manager.
+ * Provides the Reservation type plugin manager.
  */
-class ReservationWidgetManager extends DefaultPluginManager {
+class ReservationTypeManager extends DefaultPluginManager {
   /**
-   * Constructs a new ReservationWidgetManager object.
+   * Constructs a new ReservationTypeManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -19,8 +19,8 @@ class ReservationWidgetManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/ReservationWidget', $namespaces, $module_handler, 'Drupal\travel_planner\Plugin\ReservationWidgetInterface', 'Drupal\travel_planner\Annotation\ReservationWidget');
-    $this->alterInfo('travel_planner_reservation_widget_info');
-    $this->setCacheBackend($cache_backend, 'travel_planner_reservation_widget_plugins');
+    parent::__construct('Plugin/ReservationType', $namespaces, $module_handler, 'Drupal\travel_planner\Plugin\ReservationTypeInterface', 'Drupal\travel_planner\Annotation\ReservationType');
+    $this->alterInfo('travel_planner_reservation_type_info');
+    $this->setCacheBackend($cache_backend, 'travel_planner_reservation_type_plugins');
   }
 }

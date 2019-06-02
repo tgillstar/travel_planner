@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\SimpleXMLElement;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Component\Utility\Html;
 
-use Drupal\travel_planner\Plugin\ReservationWidgetManager;
+use Drupal\travel_planner\Plugin\ReservationTypeManager;
 
 /**
  * Class ReservationPageController.
@@ -91,9 +91,9 @@ class ReservationPageController extends ControllerBase {
 
   public function pageContent($reservation) {
     $output = [];
-    /** @var \Drupal\travel_planner\Plugin\ReservationWidgetInterface $widget */
-  /*  foreach ($this->pluginManagerReservationWidget->getDefinitions() as $widget) {
-      $output[$widget->getPluginId()] = $widget->buildWidget($reservation);
+    /** @var \Drupal\travel_planner\Plugin\ReservationTypeInterface $type */
+  /*  foreach ($this->pluginManagerReservationType->getDefinitions() as $type) {
+      $output[$type->getPluginId()] = $type->buildType($reservation);
     }*/
     return $output;
   }
