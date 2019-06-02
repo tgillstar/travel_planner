@@ -36,6 +36,13 @@ class ReservationPageController extends ControllerBase {
     return $reservation;
   }
 
+  static protected function array_search_partial($arr, $keyword) {
+      foreach($arr as $index => $string) {
+          if (strpos($string, $keyword) !== FALSE)
+              return $index;
+      }
+  }
+
   public function ingestEmail() {
     $raw_email = " ";
     $file_path = \Drupal::service('travel_planner.accept_email')->getEmail();
@@ -68,6 +75,9 @@ class ReservationPageController extends ControllerBase {
       $infoBlocks[] = $dom->saveHTML($tables);
     }
 
+    //Retrieve specific table with the itinerary
+    $flight_info_blocks = static::array_search_partial($infoBlocks, "itinerary");
+
     // Save parsed email content for content page generation
     /*$tempstore->set('processed_html', $doc);
 
@@ -75,7 +85,7 @@ class ReservationPageController extends ControllerBase {
 
     return array(
         '#type' => 'markup',
-        '#markup' => t(serialize($infoBlocks)),
+        '#markup' => t(serialize($infoBlocks[$flight_info_blocks])),
       );
   }
 
