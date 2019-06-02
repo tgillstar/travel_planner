@@ -8,3 +8,6 @@ The concept is that a client has requested that a Drupal site be created that he
 | Field Name | Machine Name | Description     |
 | :---------|:--------------|:-------------------------------------|
 | airline    | airline      | The airline the reservation is with. |
+
+### Disclaimer
+The code in this repository is based on tested, working code. I am currently modifying and updating it so it be broken in the process.
