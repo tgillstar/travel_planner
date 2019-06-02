@@ -1,6 +1,7 @@
 <?php
 namespace Drupal\travel_planner\Controller;
 
+use DOMDocument;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\SimpleXMLElement;
@@ -52,22 +53,29 @@ class ReservationPageController extends ControllerBase {
 
     $raw_string_content = $tempstore->get('raw_email');
 
-    // Parse the email object via HTML elements
-    $dom = Html::load($raw_string_content);
-    $html = "";
+    $infoBlocks = [];
 
-    foreach ($dom->getElementsByTagName('table') as $element) {
-      $html .= $element->getElementsByTagName('tr');
+    // Retrieve DOM object
+    $dom = new DOMDocument();
+
+    // Parse the email object via HTML elements
+    $dom->loadHTML($raw_string_content);
+    $html = $dom->getElementsByTagName('table');
+    $current = '';
+
+    // Grab table blocks of information
+    foreach ($html as $tables) {
+      $infoBlocks[] = $dom->saveHTML($tables);
     }
 
-    // Save parsed email content
-    $tempstore->set('processed_html', $html);
+    // Save parsed email content for content page generation
+    /*$tempstore->set('processed_html', $doc);
 
-    $processed_html = $tempstore->get('processed_hmtl');
+    $processed_html = $tempstore->get('processed_hmtl');*/
 
     return array(
         '#type' => 'markup',
-        '#markup' => t($processed_html),
+        '#markup' => t(serialize($infoBlocks)),
       );
   }
 
