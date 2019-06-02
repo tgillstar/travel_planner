@@ -5,6 +5,6 @@ The concept is that a client has requested that a Drupal site be created that he
 
  ### Reservation Content Type
 
-| Field Name | Machine Name | Description  |
+| Field Name | Machine Name | Description     |
 | :---------|:--------------|:-------------------------------------|
 | airline    | airline      | The airline the reservation is with. |
