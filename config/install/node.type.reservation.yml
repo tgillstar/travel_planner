@@ -1,9 +1,9 @@
 langcode: en
 status: true
 dependencies: {}
-name: 'Reservation'
-type: reservation
-description: 'The reservation information for a booked trip.'
+name: 'Flight Reservation'
+type: flight_reservation
+description: 'The flight reservation information for a booked trip.'
 help: ''
 new_revision: true
 preview_mode: 1

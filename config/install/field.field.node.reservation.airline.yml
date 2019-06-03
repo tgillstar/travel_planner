@@ -5,10 +5,10 @@ dependencies:
     - node.type.reservation
     - field.storage.node.airline
 id: node.reservation.airlines
-field_name: airline
+field_name: airline_reservation
 entity_type: node
 bundle: reservation
-label: Airline
+label: Airline Reservation
 description: The airline(s) for the reservation
 field_type: string
 settings: { }

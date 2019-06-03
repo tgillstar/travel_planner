@@ -5,7 +5,7 @@ dependencies:
     - node
     - taxonomy
 id: node.airline
-field_name: airline
+field_name: airline_reservation
 entity_type: node
 type: string
 settings:

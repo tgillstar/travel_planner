@@ -18,8 +18,8 @@ class ReservationPageController extends ControllerBase {
   protected $tempStoreFactory;
 
   /**
- * Inject services.
- */
+  * Inject services.
+  */
   public function __construct(PrivateTempStoreFactory $tempStoreFactory) {
       $this->tempStoreFactory = $tempStoreFactory;
   }
@@ -32,18 +32,27 @@ class ReservationPageController extends ControllerBase {
     );
   }
 
+  /**
+  * Return Reservation page title
+  */
   public function pageTitle($reservation) {
     return $reservation;
   }
 
-  static protected function array_search_partial($arr, $keyword) {
+  /**
+  * Returns array index that has the specified keyword
+  */
+  static protected function arraySearchPartial($arr, $keyword) {
       foreach($arr as $index => $string) {
           if (strpos($string, $keyword) !== FALSE)
               return $index;
       }
   }
 
-  public function ingestEmail() {
+  /**
+  * Displays the processed HTML with reservation information
+  */
+  public function acceptEmail() {
     $raw_email = " ";
     $file_path = \Drupal::service('travel_planner.accept_email')->getEmail();
     $tempstore = $this->tempStoreFactory->get('travel_planner');
@@ -76,7 +85,7 @@ class ReservationPageController extends ControllerBase {
     }
 
     //Retrieve specific table with the itinerary
-    $flight_info_blocks = static::array_search_partial($infoBlocks, "itinerary");
+    $flight_info_blocks = static::arraySearchPartial($infoBlocks, "itinerary");
 
     // Save parsed email content for content page generation
     /*$tempstore->set('processed_html', $doc);
@@ -89,12 +98,15 @@ class ReservationPageController extends ControllerBase {
       );
   }
 
-  public function pageContent($reservation) {
+  /**
+  * Generates a Reservation plugin.
+  */
+  public function generateReservationPlugin($reservation) {
     $output = [];
-    /** @var \Drupal\travel_planner\Plugin\ReservationTypeInterface $type */
-  /*  foreach ($this->pluginManagerReservationType->getDefinitions() as $type) {
+
+    foreach ($this->pluginManagerReservationType->getDefinitions() as $type) {
       $output[$type->getPluginId()] = $type->buildType($reservation);
-    }*/
+    }
     return $output;
   }
 }
