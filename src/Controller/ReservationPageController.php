@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\SimpleXMLElement;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Component\Utility\Html;
 
+use Drupal\travel_planner\AcceptEmailService;
 use Drupal\travel_planner\Plugin\ReservationTypeManager;
 
 /**
@@ -16,19 +17,22 @@ use Drupal\travel_planner\Plugin\ReservationTypeManager;
 class ReservationPageController extends ControllerBase {
 
   protected $tempStoreFactory;
+  protected $reservationTypeManager;
 
   /**
   * Inject services.
   */
-  public function __construct(PrivateTempStoreFactory $tempStoreFactory) {
+  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ReservationTypeManager $reservation_manager) {
       $this->tempStoreFactory = $tempStoreFactory;
+      $this->reservationTypeManager = $reservation_manager;
   }
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('tempstore.private')
+      $container->get('tempstore.private'),
+      $container->get('plugin.manager.reservation')
     );
   }
 
@@ -87,6 +91,7 @@ class ReservationPageController extends ControllerBase {
     //Retrieve specific table with the itinerary
     $flight_info_blocks = static::arraySearchPartial($infoBlocks, "itinerary");
 
+
     // Save parsed email content for content page generation
     /*$tempstore->set('processed_html', $doc);
 
@@ -104,7 +109,7 @@ class ReservationPageController extends ControllerBase {
   public function generateReservationPlugin($reservation) {
     $output = [];
 
-    foreach ($this->pluginManagerReservationType->getDefinitions() as $type) {
+    foreach ($this->reservationTypeManager->getDefinitions() as $type) {
       $output[$type->getPluginId()] = $type->buildType($reservation);
     }
     return $output;
