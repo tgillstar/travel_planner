@@ -13,11 +13,27 @@ use Drupal\Component\Annotation\Plugin;
  */
 class ReservationType extends Plugin {
   /**
-   * @var string
-   */
-  public $id;
-  /**
-   * @var \Drupal\Core\Annotation\Translation
-   */
-  public $label;
+    * The plugin ID.
+    *
+    * @var string
+    */
+   public $id;
+
+   /**
+    * The label of the plugin.
+    *
+    * @var \Drupal\Core\Annotation\Translation
+    *
+    * @ingroup plugin_translatable
+    */
+   public $label;
+
+   /**
+    * The wrapper element to use when rendering the pane's form.
+    *
+    * E.g: 'container', 'fieldset'. Defaults to 'container'.
+    *
+    * @var string
+    */
+   public $wrapperElement;
 }

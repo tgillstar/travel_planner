@@ -21,7 +21,7 @@ class ReservationTypeManager extends DefaultPluginManager {
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/ReservationType', $namespaces, $module_handler, 'Drupal\travel_planner\Plugin\ReservationTypeInterface', 'Drupal\travel_planner\Annotation\ReservationType');
-    $this->alterInfo('travel_planner_reservation_type_info');
-    $this->setCacheBackend($cache_backend, 'travel_planner_reservation_type_plugins');
+    $this->alterInfo('reservation_type_info');
+    $this->setCacheBackend($cache_backend, 'reservation_type_info');
   }
 }

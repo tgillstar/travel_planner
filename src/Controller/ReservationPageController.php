@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\SimpleXMLElement;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormBuilder;
+use Drupal\Core\Url;
 
 use Drupal\travel_planner\AcceptEmailService;
 use Drupal\travel_planner\Plugin\ReservationTypeManager;
@@ -18,13 +20,15 @@ class ReservationPageController extends ControllerBase {
 
   protected $tempStoreFactory;
   protected $reservationTypeManager;
+  private $form_builder;
 
   /**
   * Inject services.
   */
-  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ReservationTypeManager $reservation_manager) {
+  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ReservationTypeManager $reservationManager, FormBuilder $formBuilder) {
       $this->tempStoreFactory = $tempStoreFactory;
-      $this->reservationTypeManager = $reservation_manager;
+      $this->reservationTypeManager = $reservationManager;
+      $this->formBuilder = $formBuilder;
   }
   /**
    * {@inheritdoc}
@@ -32,7 +36,8 @@ class ReservationPageController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('tempstore.private'),
-      $container->get('plugin.manager.reservation')
+      $container->get('plugin.manager.reservation'),
+      $container->get('formBuilder')
     );
   }
 
@@ -57,21 +62,21 @@ class ReservationPageController extends ControllerBase {
   * Displays the processed HTML with reservation information
   */
   public function acceptEmail() {
-    $raw_email = " ";
-    $file_path = \Drupal::service('travel_planner.accept_email')->getEmail();
+    $rawEmail = " ";
+    $filePath = \Drupal::service('travel_planner.accept_email')->getEmail();
     $tempstore = $this->tempStoreFactory->get('travel_planner');
 
     // Create an email object
-    $handle = fopen($file_path, "r");
+    $handle = fopen($filePath, "r");
     if ($handle) {
         while (!feof($handle)) {
-            $raw_email .= fgets($handle, 4096);
+            $rawEmail .= fgets($handle, 4096);
         }
         fclose($handle);
     }
-    $tempstore->set('raw_email', $raw_email);
+    $tempstore->set('$rawEmail', $rawEmail);
 
-    $raw_string_content = $tempstore->get('raw_email');
+    $rawStringContent = $tempstore->get('$rawEmail');
 
     $infoBlocks = [];
 
@@ -79,7 +84,7 @@ class ReservationPageController extends ControllerBase {
     $dom = new DOMDocument();
 
     // Parse the email object via HTML elements
-    $dom->loadHTML($raw_string_content);
+    $dom->loadHTML($rawStringContent);
     $html = $dom->getElementsByTagName('table');
     $current = '';
 
@@ -89,7 +94,7 @@ class ReservationPageController extends ControllerBase {
     }
 
     //Retrieve specific table with the itinerary
-    $flight_info_blocks = static::arraySearchPartial($infoBlocks, "itinerary");
+    $flightInfoBlocks = static::arraySearchPartial($infoBlocks, "itinerary");
 
 
     // Save parsed email content for content page generation
@@ -99,18 +104,18 @@ class ReservationPageController extends ControllerBase {
 
     return array(
         '#type' => 'markup',
-        '#markup' => t(serialize($infoBlocks[$flight_info_blocks])),
+        '#markup' => t(serialize($infoBlocks[$flightInfoBlocks])),
       );
   }
 
   /**
-  * Generates a Reservation plugin.
+  * Load a reservation plugin.
   */
-  public function generateReservationPlugin($reservation) {
+  public function loadReservationPlugin($reservation) {
     $output = [];
 
     foreach ($this->reservationTypeManager->getDefinitions() as $type) {
-      $output[$type->getPluginId()] = $type->buildType($reservation);
+      $output[$type->getPluginId()] = $type->buildPaneForm($reservation);
     }
     return $output;
   }
