@@ -50,7 +50,7 @@ class ReservationPageController extends ControllerBase {
   */
   public function acceptEmail() {
     $rawEmail = " ";
-    $filePath = \Drupal::service('travel_planner.accept_email')->getEmail();
+    $filePath = \Drupal::service('travel_planner.acceptEmail')->getEmail();
     $tempstore = $this->tempStoreFactory->get('travel_planner');
 
     // Create an email object
@@ -142,12 +142,10 @@ class ReservationPageController extends ControllerBase {
     // Let's output a list of the plugin definitions we now have.
     $items = [];
     foreach ($reservation_plugin_definitions as $reservation_plugin_definition) {
-      $items[] = $this->t("@id (label: @label, rapper_element: @wrapper_element)", [
+      $items[] = $this->t("@id (description: @description, displayFormFields: @displayFormFields )", [
         '@id' => $reservation_plugin_definition['id'],
-        '@label' => $reservation_plugin_definition['label'],
         '@description' => $reservation_plugin_definition['description'],
         '@displayFormFields' => $reservation_plugin_definition['displayFormFields'],
-        '@wrapper_element' => $reservation_plugin_definition['wrapper_element'],
       ]);
     }
 
@@ -157,6 +155,8 @@ class ReservationPageController extends ControllerBase {
       '#title' => 'Reservation Type plugin definitions',
       '#items' => $items,
     ];
+
+    $flight_reservation_plugin_definition = $this->reservationTypeManager->getDefinition('flight_reservation_type');
 
     $items = [];
     foreach ($reservation_plugin_definitions as $plugin_id => $reservation_plugin_definition) {

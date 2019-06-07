@@ -1,4 +1,4 @@
-travel_planner.reservation_page_controller_pageContent:
+travel_planner.description:
   path: '/reservations'
   defaults:
     _controller: '\Drupal\travel_planner\Controller\ReservationPageController::description'
@@ -7,7 +7,7 @@ travel_planner.reservation_page_controller_pageContent:
     _permission: 'access content'
   options:
     no_cache: 'TRUE'
-travel_planner.reservation_page_controller_ingestEmail:
+travel_planner.acceptEmail:
   path: '/reservation/accept_email'
   defaults:
     _controller: '\Drupal\travel_planner\Controller\ReservationPageController::acceptEmail'
