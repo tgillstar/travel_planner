@@ -1,7 +1,7 @@
 travel_planner.reservation_page_controller_pageContent:
-  path: '/reservation/{reservation}'
+  path: '/reservations'
   defaults:
-    _controller: '\Drupal\travel_planner\Controller\ReservationPageController::loadReservationPlugin'
+    _controller: '\Drupal\travel_planner\Controller\ReservationPageController::description'
     _title: 'Travel Details: Flight Reservation'
   requirements:
     _permission: 'access content'

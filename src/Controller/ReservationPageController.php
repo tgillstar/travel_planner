@@ -2,16 +2,15 @@
 namespace Drupal\travel_planner\Controller;
 
 use DOMDocument;
+use DOMXPath;
+
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\travel_planner\AcceptEmailService;
+use Drupal\travel_planner\ReservationTypeManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\SimpleXMLElement;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Url;
-
-use Drupal\travel_planner\AcceptEmailService;
-use Drupal\travel_planner\Plugin\ReservationTypeManager;
 
 /**
  * Class ReservationPageController.
@@ -20,25 +19,13 @@ class ReservationPageController extends ControllerBase {
 
   protected $tempStoreFactory;
   protected $reservationTypeManager;
-  private $form_builder;
 
   /**
   * Inject services.
   */
-  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ReservationTypeManager $reservationManager, FormBuilder $formBuilder) {
+  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ReservationTypeManager $reservationManager) {
       $this->tempStoreFactory = $tempStoreFactory;
       $this->reservationTypeManager = $reservationManager;
-      $this->formBuilder = $formBuilder;
-  }
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('tempstore.private'),
-      $container->get('plugin.manager.reservation'),
-      $container->get('formBuilder')
-    );
   }
 
   /**
@@ -79,6 +66,8 @@ class ReservationPageController extends ControllerBase {
     $rawStringContent = $tempstore->get('$rawEmail');
 
     $infoBlocks = [];
+    $itineraryBlock = [];
+    $flightLegs = [];
 
     // Retrieve DOM object
     $dom = new DOMDocument();
@@ -93,9 +82,42 @@ class ReservationPageController extends ControllerBase {
       $infoBlocks[] = $dom->saveHTML($tables);
     }
 
-    //Retrieve specific table with the itinerary
-    $flightInfoBlocks = static::arraySearchPartial($infoBlocks, "itinerary");
+    //Retrieve specific table with word "itinerary" within
+    $flightInfo = static::arraySearchPartial($infoBlocks, 'itinerary');
 
+    $itineraryDOM = new DOMDocument();
+    $itineraryDOM->loadHTML($infoBlocks[$flightInfo]);
+    $xpath = new DOMXPath($itineraryDOM);
+    $legs = $itineraryDOM->getElementsByTagName('table');
+
+    // Retrieve only the tables that have the word "flight" within it
+    $count = 0;
+    $nb = $legs->length;
+    for($pos=1; $pos<$nb-1; $pos++) {
+      $itineraryBlock[] = $itineraryDOM->saveHTML($legs[$pos]);
+    }
+
+  /*  foreach($legs as $leg){
+       // Look into each leg for the flight details
+       //if ($count !== 0) {
+         $flightDOM = new DOMDocument();
+         $flightDOM->loadHTML(serialize($leg));
+         $xpath2 = new DOMXPath($flightDOM);
+         $flightDetail = $xpath->query('//*[contains(text(),"Flight")]/ancestor::table');
+
+        if ($flightDetail->length>0) {
+            $count += 1;
+            $itineraryBlock[] = $itineraryDOM->saveHTML($leg);
+        }
+       //}
+    }*/
+
+    /*$flightBlockDOM = new DOMDocument();
+
+    foreach($flightInfoBlocks as $flightBlock){
+       $flightBlockDOM->loadHTML($itineraryBlocks[$flightBlock]);
+       $flightLegs[] = $flightBlockDOM->saveHTML($flightBlockDOM);
+    }*/
 
     // Save parsed email content for content page generation
     /*$tempstore->set('processed_html', $doc);
@@ -104,19 +126,65 @@ class ReservationPageController extends ControllerBase {
 
     return array(
         '#type' => 'markup',
-        '#markup' => t(serialize($infoBlocks[$flightInfoBlocks])),
+        '#markup' => t(serialize($itineraryBlock)),
       );
   }
 
-  /**
-  * Load a reservation plugin.
-  */
-  public function loadReservationPlugin($reservation) {
-    $output = [];
+  public function description() {
+    $build = [];
 
-    foreach ($this->reservationTypeManager->getDefinitions() as $type) {
-      $output[$type->getPluginId()] = $type->buildPaneForm($reservation);
+    $build['intro'] = [
+      '#markup' => $this->t("This page lists the reservation plugins we've created."),
+    ];
+
+    $reservation_plugin_definitions = $this->reservationTypeManager->getDefinitions();
+
+    // Let's output a list of the plugin definitions we now have.
+    $items = [];
+    foreach ($reservation_plugin_definitions as $reservation_plugin_definition) {
+      $items[] = $this->t("@id (label: @label, rapper_element: @wrapper_element)", [
+        '@id' => $reservation_plugin_definition['id'],
+        '@label' => $reservation_plugin_definition['label'],
+        '@description' => $reservation_plugin_definition['description'],
+        '@displayFormFields' => $reservation_plugin_definition['displayFormFields'],
+        '@wrapper_element' => $reservation_plugin_definition['wrapper_element'],
+      ]);
     }
-    return $output;
+
+    // Add our list to the render array.
+    $build['plugin_definitions'] = [
+      '#theme' => 'item_list',
+      '#title' => 'Reservation Type plugin definitions',
+      '#items' => $items,
+    ];
+
+    $items = [];
+    foreach ($reservation_plugin_definitions as $plugin_id => $reservation_plugin_definition) {
+      $plugin = $this->reservationTypeManager->createInstance($plugin_id, ['of' => 'configuration values']);
+      $items[] = $plugin->description();
+    }
+
+    $build['plugins'] = [
+      '#theme' => 'item_list',
+      '#title' => 'Reservation Type plugins',
+      '#items' => $items,
+    ];
+
+    return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * Override the parent method so that we can inject our Reservation Type plugin
+   * manager service into the controller.
+   *
+   * @see container
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('tempstore.private'),
+      $container->get('plugin.manager.reservation')
+    );
   }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\travel_planner\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -27,6 +28,15 @@ class ReservationType extends Plugin {
     * @ingroup plugin_translatable
     */
    public $label;
+
+   /**
+     * The description of the Reservation Type.
+     *
+     * @var \Drupal\Core\Annotation\Translation
+     *
+     * @ingroup plugin_translatable
+     */
+    public $description;
 
    /**
     * The wrapper element to use when rendering the pane's form.
