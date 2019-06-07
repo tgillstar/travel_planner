@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ReservationType(
  *   id = "flight_reservation_type",
- *   description = @Translation("This is a flight reservation.")
+ *   description = @Translation("This is a flight Reservation Type.")
  * )
  */
 class FlightReservationType extends ReservationTypeBase implements ContainerFactoryPluginInterface {
@@ -62,9 +62,12 @@ class FlightReservationType extends ReservationTypeBase implements ContainerFact
     // We override the description() method in order to change the description
     // text based on the date. On Sunday we only have day old bread.
     if ($this->day == 'Tues') {
-      return $this->t("This is the best day to book flight reservations.");
+      return $this->t('This is the best day to book flight reservations. '.$this->displayFormFields());
+    }else {
+      return $this->t('This is a booked flight reservation. '.$this->displayFormFields());
     }
-    return parent::description();
+
+    //return parent::description();
   }
 
   /**
@@ -75,7 +78,8 @@ class FlightReservationType extends ReservationTypeBase implements ContainerFact
    */
   public function displayFormFields() {
       $formFieldDefintions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node','flight_reservation');
-    //return serialize($formFieldDefintions);
-    return "Display Form Fields for the Flight Reservation Type.";
+
+    return $this->t(serialize($formFieldDefintions));
+    //return "Display Form Fields for the Flight Reservation Type.";
   }
 }

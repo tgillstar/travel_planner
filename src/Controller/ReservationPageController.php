@@ -142,10 +142,9 @@ class ReservationPageController extends ControllerBase {
     // Let's output a list of the plugin definitions we now have.
     $items = [];
     foreach ($reservation_plugin_definitions as $reservation_plugin_definition) {
-      $items[] = $this->t("@id (description: @description, displayFormFields: @displayFormFields )", [
+      $items[] = $this->t("@id (description: @description)", [
         '@id' => $reservation_plugin_definition['id'],
         '@description' => $reservation_plugin_definition['description'],
-        '@displayFormFields' => $reservation_plugin_definition['displayFormFields'],
       ]);
     }
 
